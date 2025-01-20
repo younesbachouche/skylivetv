@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algerian Channels by Younes Bachouche</title>
+    <link rel="icon" href="https://i.imgur.com/Kp7PJkU.png">
+    <link rel="shortcut" href="https://i.imgur.com/Kp7PJkU.png">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/Kp7PJkU.png">
+    <meta content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no' name='viewport'>
+    <meta name="description" content="Built by Algerian developer Younes Bachouche.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        body.light-mode {
+            background-color: #f5f5f5;
+            color: #121212;
+        }
+
+        .header {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: inherit;
+            text-align: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #333333;
+        }
+
+        body.light-mode .card {
+            background-color: #ffffff;
+            border-color: #ddd;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .card img {
+            width: 80px;
+            height: 80px;
+            margin-top: 20px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .card h3 {
+            margin: 15px 0;
+            font-size: 18px;
+            font-weight: 500;
+            color: inherit;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            height: 80%;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #ff3b30;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background-color: #ff5e52;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        #search-bar {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #333333;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        body.light-mode #search-bar {
+            background-color: #ffffff;
+            border-color: #ddd;
+            color: #121212;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #888;
+        }
+
+        footer a {
+            color: #ff3b30;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        #language-switch {
+            margin-bottom: 20px;
+            padding: 8px;
+            border-radius: 8px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            border: 1px solid #333333;
+            font-size: 16px;
+        }
+
+        body.light-mode #language-switch {
+            background-color: #ffffff;
+            border-color: #ddd;
+            color: #121212;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .card img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .card h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switch -->
+    <select id="language-switch" onchange="changeLanguage()">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="ar">العربية</option>
+    </select>
+
+    <div class="header" id="header">Algerian Channels</div>
+    <input type="text" id="search-bar" placeholder="Search channels..." oninput="filterChannels()">
+    <div class="container">
+        <!-- Channel Cards -->
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=entv_algerie')">
+            <img src="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS1_DIGITAL_Mono.png" alt="ENTV">
+            <h3>beIN SPORTS 1</h3>
+        </div>
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=algerie')">
+            <img src="https://assets.bein.com/mena/sites/4/2021/02/beIN_SPORTS2_DIGITAL_Mono.png" alt="Canal Algerie">
+            <h3>beIN SPORTS 2</h3>
+        </div>
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/mobiletv/glarb.php?id=algeria3')">
+            <img src="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS3_DIGITAL_Mono.png" alt="Algerie 3">
+            <h3>beIN SPORTS 3</h3>
+        </div>
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/mobiletv/glarb.php?id=algeria4')">
+            <img src="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS4_DIGITAL_Mono.png" alt="Tamazigh TV">
+            <h3>beIN SPORTS 4</h3>
+        </div>
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=algerie5')">
+            <img src="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS5_DIGITAL_Mono.png" alt="Coran TV">
+            <h3>beIN SPORTS 5</h3>
+        </div>
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=algerie6')">
+            <img src="https://img.kooora.com/?i=o%2Fh%2F1%2F206%2Fbein-sports-hd-1.png" alt="Essadissa TV">
+            <h3>beIN SPORTS 6</h3>
+        </div>
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=algerie7')">
+            <img src="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS7_DIGITAL_Mono.png" alt="Al Maarifa TV7">
+            <h3>beIN SPORTS 7</h3>
+        </div>
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=algerie8')">
+            <img src="https://connect.bein.com/proxy/imgdata?objectId=62&type=100&format_w=125&format_h=125&ratio=1&languageId=ara" alt="Edhakira TV8">
+            <h3>beIN SPORTS 1 FR</h3>
+        </div>
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=ennahartv')">
+            <img src="https://connect.bein.com/proxy/imgdata?objectId=63&type=100&format_w=125&format_h=125&ratio=1&languageId=ara" alt="Edhakira TV8">
+            <h3>beIN SPORTS 2 FR</h3>
+        </div>
+        <div class="card" onclick="openModal('https://windnew.iosplayer.ru/wind/premium121/mono.m3u8?token=none')">
+            <img src="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40052/canal-ouah/CHN43FN/CHN43FN_301_29082023" alt="Edhakira TV8">
+            <h3>CANAL+</h3>
+        </div>
+        <div class="card" onclick="openModal('https://windnew.iosplayer.ru/wind/premium463/mono.m3u8?token=none')">
+            <img src="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40208/canal-ouah/CHN43FN/CHN43FN_19_29082023" alt="Edhakira TV8">
+            <h3>CANAL+ FOOT</h3>
+        </div>
+        <div class="card" onclick="openModal('https://windnew.iosplayer.ru/wind/premium122/mono.m3u8?token=none')">
+            <img src="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40208/canal-ouah/CHN43FN/CHN43FN_19_29082023" alt="Edhakira TV8">
+            <h3>CANAL+ SPORT</h3>
+        </div>    
+        <div class="card" onclick="openModal('https://ddv2new.iosplayer.ru/ddv2/premium119/mono.m3u8?token=none')">
+            <img src="https://www.programme-tv.net/imgre/fit/~2~channel~e08d0f4124b46a3e.png/1200x630/crop-from/top/quality/80/rmc-sport-1.png" alt="Edhakira TV8">
+            <h3>RMC SPORT 1</h3>
+        </div>  
+       
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/mobiletv/glarb.php?id=samira_tv')">
+            <img src="https://www.programme-tv.net/imgre/fit/~2~channel~7123b0e700cbccac.png/1200x630/crop-from/top/quality/80/rmc-sport-2.png" alt="Edhakira TV8">
+            <h3>RMC SPORT 2</h3>
+        </div>   
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=elheddaf')">
+            <img src="https://avatars.mds.yandex.net/i?id=8eba464d020d1db0ce29e08f11842c7c_l-7284491-images-thumbs&n=13 alt="Edhakira TV8">
+            <h3>Sky SPORTS Premier League</h3>
+        </div>    
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=elheddaf')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Sky_Sport_Football_-_Logo_2020.svg/2560px-Sky_Sport_Football_-_Logo_2020.svg.png"Edhakira TV8">
+            <h3>Sky SPORTS Football</h3>
+        </div> 
+
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=elheddaf')">
+            <img src="https://static.wikia.nocookie.net/logopedia/images/d/d7/Sky_Sports_Main_Event_Stacked.svg/revision/latest/scale-to-width-down/250?cb=20220728001048"Edhakira TV8">
+            <h3>Sky SPORTS Main Event</h3>
+        </div> 
+
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=elheddaf')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Sky_Sport_Football_-_Logo_2020.svg/2560px-Sky_Sport_Football_-_Logo_2020.svg.png"Edhakira TV8">
+            <h3>Sky SPORTS Football</h3>
+        </div> 
+
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=elheddaf')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Sky_Sport_Football_-_Logo_2020.svg/2560px-Sky_Sport_Football_-_Logo_2020.svg.png"Edhakira TV8">
+            <h3>Sky SPORTS Football</h3>
+        </div> 
+
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=elheddaf')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Sky_Sport_Football_-_Logo_2020.svg/2560px-Sky_Sport_Football_-_Logo_2020.svg.png"Edhakira TV8">
+            <h3>Sky SPORTS Football</h3>
+        </div> 
+
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=elheddaf')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Sky_Sport_Football_-_Logo_2020.svg/2560px-Sky_Sport_Football_-_Logo_2020.svg.png"Edhakira TV8">
+            <h3>Sky SPORTS Football</h3>
+        </div> 
+
+        <div class="card" onclick="openModal('https://www.elahmad.com/tv/algeria_live.php?id=elheddaf')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Sky_Sport_Football_-_Logo_2020.svg/2560px-Sky_Sport_Football_-_Logo_2020.svg.png"Edhakira TV8">
+            <h3>Sky SPORTS Football</h3>
+        </div> 
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <div class="loading">Loading...</div>
+            <iframe id="stream-iframe" src="" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Built with ❤️ by Younes Bachouche | <a href="https://github.com/yourusername" target="_blank">GitHub</a></p>
+    </footer>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const streamIframe = document.getElementById('stream-iframe');
+        const loading = document.querySelector('.loading');
+
+        // Language Translations
+        const translations = {
+            en: { header: "Algerian Channels", searchPlaceholder: "Search channels..." },
+            fr: { header: "Chaînes Algériennes", searchPlaceholder: "Rechercher des chaînes..." },
+            ar: { header: "القنوات الجزائرية", searchPlaceholder: "ابحث عن القنوات..." }
+        };
+
+        // Change Language
+        function changeLanguage() {
+            const lang = document.getElementById('language-switch').value;
+            document.getElementById('header').textContent = translations[lang].header;
+            document.getElementById('search-bar').placeholder = translations[lang].searchPlaceholder;
+        }
+
+        // Open Modal
+        function openModal(url) {
+            loading.style.display = 'flex';
+            streamIframe.src = url;
+            modal.style.display = 'flex';
+
+            streamIframe.onload = () => {
+                loading.style.display = 'none';
+            };
+
+            streamIframe.onerror = () => {
+                loading.textContent = 'Failed to load stream. Please try again later.';
+            };
+        }
+
+        // Close Modal
+        function closeModal() {
+            modal.style.display = 'none';
+            streamIframe.src = '';
+        }
+
+        // Filter Channels
+        function filterChannels() {
+            const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const channelName = card.querySelector('h3').textContent.toLowerCase();
+                if (channelName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Set Language on Page Load
+        window.onload = () => {
+            const savedLang = localStorage.getItem('language') || 'en';
+            document.getElementById('language-switch').value = savedLang;
+            changeLanguage();
+        };
+
+        // Save Language Preference
+        document.getElementById('language-switch').addEventListener('change', () => {
+            const lang = document.getElementById('language-switch').value;
+            localStorage.setItem('language', lang);
+        });
+    </script>
+</body>
+</html>
